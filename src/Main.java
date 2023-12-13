@@ -23,15 +23,16 @@ public class Main {
                 "1  - Show all customers\n" +
                 "2  - Show all bookings\n" +
                 "3  - Add a customer\n" +
-                "4  - Add a booking\n" +
-                "5  - Update a customer\n" +
-                "6  - Update a booking\n" +
+                "4  - Create a booking\n" +
+                "5  - Update customer information\n" +
+                "6  - Update booking information\n" +
                 "7  - Delete a booking\n" +
-                "8  - Show invoice information\n" +
-                "9  - Show a list of all options.");
+                "8  - Mark a customer as VIP\n" +
+                "9  - Show invoice information\n");
+        System.out.println("Enter your choice: ");
     }
 
-    private static int testInput() {
+    private static int testNumInput() {
         int choice = -1;
         while (choice == -1) {
             try {
@@ -52,7 +53,7 @@ public class Main {
         System.out.println("Street address:");
         String streetAddress = scanner.nextLine();
         System.out.println("Postal code:");
-        int postalCode = testInput();
+        int postalCode = testNumInput();
         System.out.println("City:");
         String city = scanner.nextLine();
         System.out.println("Country:");
@@ -67,7 +68,7 @@ public class Main {
 
     private static void insertBooking() {
         System.out.println("Customer number:");
-        int customerNr = testInput();
+        int customerNr = testNumInput();
         System.out.println("Booking date (YYYY-MM-DD):");
         String bookingDate = scanner.nextLine();
         System.out.println("Pickup date (YYYY-MM-DD):");
@@ -75,7 +76,7 @@ public class Main {
         System.out.println("Return date (YYYY-MM-DD):");
         String returnDate = scanner.nextLine();
         System.out.println("Price per day:");
-        int pricePerDay = testInput();
+        int pricePerDay = testNumInput();
         System.out.println("Car registration number:");
         String carRegNr = scanner.nextLine();
         insertBooking(bookingDate, pickupDate, returnDate, pricePerDay, customerNr, carRegNr);
@@ -83,9 +84,9 @@ public class Main {
 
     private static void updateCustomer() {
         System.out.println("Input customer number for the customer you want to update:");
-        int customerNr = testInput();
+        int customerNr = testNumInput();
         printUpdateCustomerMenu();
-        int selection = testInput();
+        int selection = testNumInput();
         switch (selection) {
             case 1:
                 updateFirstName(customerNr);
@@ -97,10 +98,10 @@ public class Main {
                 updateAddress(customerNr);
                 break;
             case 4:
-                //updateTelephone();
+                updateTelephone(customerNr);
                 break;
             case 5:
-                //updateEmail();
+                updateEmail(customerNr);
                 break;
         }
 
@@ -108,7 +109,7 @@ public class Main {
 
     private static void printUpdateCustomerMenu() {
         System.out.println("\nWhat do you want to update?:\n");
-        System.out.println("0  - Quit\n" +
+        System.out.println("0  - Back\n" +
                 "1  - First name\n" +
                 "2  - Last name\n" +
                 "3  - Address\n" +
@@ -116,12 +117,71 @@ public class Main {
                 "5  - Email");
     }
 
+    private static void updateBooking() {
+        System.out.println("Input booking number for the booking you want to update:");
+        int bookingNr = testNumInput();
+        printUpdateBookingMenu();
+        int selection = testNumInput();
+        switch (selection) {
+            case 1:
+                updatePickupDate(bookingNr);
+                break;
+            case 2:
+                updateReturnDate(bookingNr);
+                break;
+            case 3:
+                updatePricePerDay(bookingNr);
+                break;
+            case 4:
+                updateCarRegNr(bookingNr);
+                break;
+            case 0:
+                return;
+        }
+
+    }
+
+
+    private static void printUpdateBookingMenu() {
+        System.out.println("\nWhat do you want to update?:\n");
+        System.out.println("0  - Back\n" +
+                "1  - Pickup date\n" +
+                "2  - Return date\n" +
+                "3  - Price per day\n" +
+                "4  - Car registration number\n");
+    }
+
+    private static void updatePickupDate(int bookingNr) {
+        System.out.println("New pickup date:");
+        String pickupDate = scanner.nextLine();
+        updatePickupDate(pickupDate, bookingNr);
+    }
+
+    private static void updateReturnDate(int bookingNr) {
+        System.out.println("New return date:");
+        String returnDate = scanner.nextLine();
+        updateReturnDate(returnDate, bookingNr);
+    }
+
+    private static void updatePricePerDay(int bookingNr) {
+        System.out.println("New price per day:");
+        int pricePerDay = testNumInput();
+        updatePricePerDay(pricePerDay, bookingNr);
+    }
+
+    private static void updateCarRegNr(int bookingNr) {
+        System.out.println("New car registration number:");
+        String carRegNr = scanner.nextLine();
+        updateCarRegNr(carRegNr, bookingNr);
+    }
+
+
+
     private static void updateFirstName(int customerNr) {
         System.out.println("New first name:");
         String firstName = scanner.nextLine();
         updateFirstName(firstName, customerNr);
     }
-
 
 
     private static void updateLastName(int customerNr) {
@@ -131,49 +191,37 @@ public class Main {
     }
 
     private static void updateAddress(int customerNr) {
-        System.out.println("Street address:");
+        System.out.println("New street address:");
         String streetAddress = scanner.nextLine();
-        System.out.println("Postal code:");
-        int postalCode = testInput();
-        System.out.println("City:");
+        System.out.println("New postal code:");
+        int postalCode = testNumInput();
+        System.out.println("New city:");
         String city = scanner.nextLine();
-        System.out.println("Country:");
+        System.out.println("New country:");
         String country = scanner.nextLine();
         updateAddress(streetAddress, postalCode, city, country, customerNr);
     }
 
-    private static void updateAddress(String streetAddress, int postalCode, String city, String country, int customerNr) {
-        String sql = "UPDATE customer SET streetAddress = ? , "
-                + "postalCode = ? , "
-                + "city = ? ,"
-                + "country = ? "
-                + "WHERE customerNr = ?";
-
-
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // set the corresponding param
-            pstmt.setString(1, streetAddress);
-            pstmt.setInt(2, postalCode);
-            pstmt.setString(3, city);
-            pstmt.setString(4, country);
-            // update
-            pstmt.executeUpdate();
-            System.out.println("You have successfully updated the customer's address!");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
+    private static void updateTelephone(int customerNr) {
+        System.out.println("New telephone Number:");
+        String telephone = scanner.nextLine();
+        updateTelephone(telephone, customerNr);
     }
 
-
+    private static void updateEmail(int customerNr) {
+        System.out.println("New email address:");
+        String email = scanner.nextLine();
+        updateEmail(email, customerNr);
+    }
 
 
     private static void deleteBooking(){
-        System.out.println("Bookning number for the booking you want to delete: ");
-        int bookingNr = testInput();
+        System.out.println("Insert booking number for the booking you want to delete: ");
+        int bookingNr = testNumInput();
         deleteBooking(bookingNr);
     }
+
+
 
     private static void selectAllCustomers(){
         String sql = "SELECT * FROM customer";
@@ -226,6 +274,27 @@ public class Main {
         }
     }
 
+    private static void insertCustomer(String firstName, String lastName, String streetAddress, int postalCode, String city, String country, String telephone, String email) {
+        String sql = "INSERT INTO customer (firstName, lastName, streetAddress, postalCode, city, country, telephone, email) VALUES(?,?,?,?,?,?,?,?)";
+
+        try{
+            Connection conn = connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, streetAddress);
+            pstmt.setInt(4, postalCode);
+            pstmt.setString(5, city);
+            pstmt.setString(6, country);
+            pstmt.setString(7, telephone);
+            pstmt.setString(8, email);
+            pstmt.executeUpdate();
+            System.out.println("You have successfully added a new customer!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
 
     private static void insertBooking(String bookingDate, String pickupDate, String returnDate, int pricePerDay, int customerNr, String carRegNr) {
@@ -241,32 +310,13 @@ public class Main {
             pstmt.setInt(5, customerNr);
             pstmt.setString(6, carRegNr);
             pstmt.executeUpdate();
-            System.out.println("You have added a new booking!");
+            System.out.println("You have successfully added a new booking!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private static void insertCustomer(String firstName, String lastName, String streetAddress, int postalCode, String city, String country, String telephone, String email) {
-        String sql = "INSERT INTO customer (firstName, lastName, streetAddress, postalCode, city, country, telephone, email) VALUES(?,?,?,?,?,?,?,?)";
 
-        try{
-            Connection conn = connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, firstName);
-            pstmt.setString(2, lastName);
-            pstmt.setString(3, streetAddress);
-            pstmt.setInt(4, postalCode);
-            pstmt.setString(5, city);
-            pstmt.setString(6, country);
-            pstmt.setString(5, telephone);
-            pstmt.setString(6, email);
-            pstmt.executeUpdate();
-            System.out.println("You have added a new customer!");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     private static void updateFirstName(String firstName, int customerNr) {
         String sql = "UPDATE customer SET firstName = ?"
@@ -299,6 +349,138 @@ public class Main {
             // update
             pstmt.executeUpdate();
             System.out.println("You have updated the customer's last name");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateAddress(String streetAddress, int postalCode, String city, String country, int customerNr) {
+        String sql = "UPDATE customer SET streetAddress = ? , "
+                + "postalCode = ? , "
+                + "city = ? ,"
+                + "country = ? "
+                + "WHERE customerNr = ?";
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, streetAddress);
+            pstmt.setInt(2, postalCode);
+            pstmt.setString(3, city);
+            pstmt.setString(4, country);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the customer's address!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateTelephone(String telephone, int customerNr) {
+        String sql = "UPDATE customer SET telephone = ?"
+                + "WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, telephone);
+            pstmt.setInt(2, customerNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the customer's telephone number");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateEmail(String email, int customerNr) {
+        String sql = "UPDATE customer SET email = ?"
+                + "WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, email);
+            pstmt.setInt(2, customerNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the customer's email address!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updatePickupDate(String pickupDate, int bookingNr) {
+        String sql = "UPDATE customer SET pickupDate = ?"
+                + "WHERE bookingNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, pickupDate);
+            pstmt.setInt(2, bookingNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the booking!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateReturnDate(String returnDate, int bookingNr) {
+        String sql = "UPDATE customer SET returnDate = ?"
+                + "WHERE bookingNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, returnDate);
+            pstmt.setInt(2, bookingNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the booking!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updatePricePerDay(int pricePerDay, int bookingNr) {
+        String sql = "UPDATE customer SET pricePerDay = ?"
+                + "WHERE bookingNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setInt(1, pricePerDay);
+            pstmt.setInt(2, bookingNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the booking!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateCarRegNr(String carRegNr, int bookingNr) {
+        String sql = "UPDATE customer SET carRegNr = ?"
+                + "WHERE bookingNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, carRegNr);
+            pstmt.setInt(2, bookingNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the booking!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -348,8 +530,8 @@ public class Main {
         boolean quit = false;
         printMainMenu();
         while(!quit) {
-            int selection = testInput();
-
+            printMainMenu();
+            int selection = testNumInput();
             switch (selection) {
                 case 0:
                     System.out.println("\nQuitting...");
@@ -371,7 +553,7 @@ public class Main {
                     updateCustomer();
                     break;
                 case 6:
-                    //updateBooking();
+                    updateBooking();
                     break;
                 case 7:
                     deleteBooking();
@@ -379,9 +561,11 @@ public class Main {
                 case 8:
                     //showInvoiceInformation();
                     break;
+                case 9:
+                    printMainMenu();
+                    break;
             }
         }
-
     }
 
 }
