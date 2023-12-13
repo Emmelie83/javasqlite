@@ -88,13 +88,13 @@ public class Main {
         int selection = testInput();
         switch (selection) {
             case 1:
-                //updateFirstName();
+                updateFirstName(customerNr);
                 break;
             case 2:
-                //updateLastName();
+                updateLastName(customerNr);
                 break;
             case 3:
-                //updateAddress();
+                updateAddress(customerNr);
                 break;
             case 4:
                 //updateTelephone();
@@ -115,6 +115,58 @@ public class Main {
                 "4  - Telephone\n" +
                 "5  - Email");
     }
+
+    private static void updateFirstName(int customerNr) {
+        System.out.println("New first name:");
+        String firstName = scanner.nextLine();
+        updateFirstName(firstName, customerNr);
+    }
+
+
+
+    private static void updateLastName(int customerNr) {
+        System.out.println("New last name:");
+        String lastName = scanner.nextLine();
+        updateLastName(lastName, customerNr);
+    }
+
+    private static void updateAddress(int customerNr) {
+        System.out.println("Street address:");
+        String streetAddress = scanner.nextLine();
+        System.out.println("Postal code:");
+        int postalCode = testInput();
+        System.out.println("City:");
+        String city = scanner.nextLine();
+        System.out.println("Country:");
+        String country = scanner.nextLine();
+        updateAddress(streetAddress, postalCode, city, country, customerNr);
+    }
+
+    private static void updateAddress(String streetAddress, int postalCode, String city, String country, int customerNr) {
+        String sql = "UPDATE customer SET streetAddress = ? , "
+                + "postalCode = ? , "
+                + "city = ? ,"
+                + "country = ? "
+                + "WHERE customerNr = ?";
+
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, streetAddress);
+            pstmt.setInt(2, postalCode);
+            pstmt.setString(3, city);
+            pstmt.setString(4, country);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully updated the customer's address!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
 
 
     private static void deleteBooking(){
@@ -216,6 +268,42 @@ public class Main {
         }
     }
 
+    private static void updateFirstName(String firstName, int customerNr) {
+        String sql = "UPDATE customer SET firstName = ?"
+                + "WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, firstName);
+            pstmt.setInt(2, customerNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have updated the customer's first name");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void updateLastName(String lastName, int customerNr) {
+        String sql = "UPDATE customer SET lastName = ?"
+                + "WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, lastName);
+            pstmt.setInt(2, customerNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have updated the customer's last name");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private static void update(String forfattare, String titel, int pris, int id) {
         String sql = "UPDATE bok SET bokForfattare = ? , "
                 + "bokTitel = ? , "
@@ -281,11 +369,9 @@ public class Main {
                     break;
                 case 5:
                     updateCustomer();
-
-                    printMainMenu();
                     break;
                 case 6:
-                   //updateBooking();
+                    //updateBooking();
                     break;
                 case 7:
                     deleteBooking();
