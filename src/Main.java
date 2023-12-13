@@ -17,82 +17,114 @@ public class Main {
         return conn;
     }
 
-    private static void printActions() {
-        System.out.println("\nVälj:\n");
-        System.out.println("0  - Stäng av\n" +
-                "1  - Visa alla kunder\n" +
-                "2  - Gör en bokning för en viss kund\n" +
-                "3  - Uppdatera en kund\n" +
-                "4  - Visa alla bokningar\n" +
-                "5  - Visa en lista över alla val.");
+    private static void printMainMenu() {
+        System.out.println("\nOptions:\n");
+        System.out.println("0  - Quit\n" +
+                "1  - Show all customers\n" +
+                "2  - Show all bookings\n" +
+                "3  - Add a customer\n" +
+                "4  - Add a booking\n" +
+                "5  - Update a customer\n" +
+                "6  - Update a booking\n" +
+                "7  - Delete a booking\n" +
+                "8  - Show invoice information\n" +
+                "9  - Show a list of all options.");
     }
 
-    private static void insertBokning() {
-        System.out.println("Ange kundnummer");
-        int kundNr = Integer.parseInt(scanner.nextLine());
-        System.out.println("Ange bokningsdatum:");
-        String bokningsDatum = scanner.nextLine();
-        System.out.println("Ange upphämtningsdatum:");
-        String upphamtning = scanner.nextLine();
-        System.out.println("Ange återlämningsdatum:");
-        String aterlamning = scanner.nextLine();
-        System.out.println("Ange registreringsnumret för vald hyrbil:");
-        String hyrbilsregNr = scanner.nextLine();
-        System.out.println("Ange pris per dag för vald hyrbil:");
-        int prisPerDag = Integer.parseInt(scanner.nextLine());
-        insertBokning(bokningsDatum, upphamtning, aterlamning, prisPerDag, kundNr, hyrbilsregNr);
+    private static int testInput() {
+        int choice = -1;
+        while (choice == -1) {
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (Exception e) {
+                System.out.println("Error: You have to input a number.");
+            }
+        }
+        return choice;
     }
 
-    private static void updateKund() {
-        System.out.println("Ange kundnumret för den kund som du vill uppdatera:");
-        System.out.println("1. Namn");
-        System.out.println("2. Adress");
-        System.out.println("3. Telefon");
-        System.out.println("4. Epost");
-        System.out.println("Ditt val:");
-        int selection = Integer.parseInt(scanner.nextLine());
+
+    private static void insertCustomer() {
+        System.out.println("First Name:");
+        String firstName = scanner.nextLine();
+        System.out.println("Last Name:");
+        String lastName = scanner.nextLine();
+        System.out.println("Street address:");
+        String streetAddress = scanner.nextLine();
+        System.out.println("Postal code:");
+        int postalCode = testInput();
+        System.out.println("City:");
+        String city = scanner.nextLine();
+        System.out.println("Country:");
+        String country = scanner.nextLine();
+        System.out.println("Telephone:");
+        String telephone = scanner.nextLine();
+        System.out.println("Email:");
+        String email = scanner.nextLine();
+        insertCustomer(firstName, lastName, streetAddress, postalCode, city, country, telephone, email);
+    }
+
+
+    private static void insertBooking() {
+        System.out.println("Customer number:");
+        int customerNr = testInput();
+        System.out.println("Booking date (YYYY-MM-DD):");
+        String bookingDate = scanner.nextLine();
+        System.out.println("Pickup date (YYYY-MM-DD):");
+        String pickupDate = scanner.nextLine();
+        System.out.println("Return date (YYYY-MM-DD):");
+        String returnDate = scanner.nextLine();
+        System.out.println("Price per day:");
+        int pricePerDay = testInput();
+        System.out.println("Car registration number:");
+        String carRegNr = scanner.nextLine();
+        insertBooking(bookingDate, pickupDate, returnDate, pricePerDay, customerNr, carRegNr);
+    }
+
+    private static void updateCustomer() {
+        System.out.println("Input customer number for the customer you want to update:");
+        int customerNr = testInput();
+        printUpdateCustomerMenu();
+        int selection = testInput();
         switch (selection) {
             case 1:
-                System.out.println("Ange förnamn:");
-                System.out.println("Ange efternamn:");
-                andraNamn(fornamn, efternamn);
+                //updateFirstName();
                 break;
-
-            case 1:
-
-                break;
-
             case 2:
-                insertBokning();
+                //updateLastName();
                 break;
-
             case 3:
-                System.out.println("Ange kundnumret för den kund som du vill uppdatera:");
-                int kundNr = Integer.parseInt(scanner.nextLine());
-                update();
+                //updateAddress();
                 break;
-
             case 4:
-                //delete(1);
-                deleteBokning();
+                //updateTelephone();
                 break;
-
             case 5:
-                printActions();
+                //updateEmail();
                 break;
         }
 
     }
 
-
-    private static void deleteBokning(){
-        System.out.println("Skriv in bokningsnumret för den bokning som ska tas bort: ");
-        int bokningsNr = Integer.parseInt(scanner.nextLine());
-        delete(bokningsNr);
+    private static void printUpdateCustomerMenu() {
+        System.out.println("\nWhat do you want to update?:\n");
+        System.out.println("0  - Quit\n" +
+                "1  - First name\n" +
+                "2  - Last name\n" +
+                "3  - Address\n" +
+                "4  - Telephone\n" +
+                "5  - Email");
     }
 
-    private static void selectAll(){
-        String sql = "SELECT * FROM kund";
+
+    private static void deleteBooking(){
+        System.out.println("Bookning number for the booking you want to delete: ");
+        int bookingNr = testInput();
+        deleteBooking(bookingNr);
+    }
+
+    private static void selectAllCustomers(){
+        String sql = "SELECT * FROM customer";
 
         try {
             Connection conn = connect();
@@ -101,16 +133,40 @@ public class Main {
 
             // loop through the result set
             while (rs.next()) {
-                System.out.println(rs.getInt("kundNr") +  "\t" +
-                        rs.getString("fornamn") + "\t" +
-                        rs.getString("efternamn") + "\t" +
-                        rs.getString("gatuadress") + "\t" +
-                        rs.getString("postNr") + "\t" +
-                        rs.getString("ort") + "\t" +
-                        rs.getString("land") + "\t" +
-                        rs.getString("telefon") + "\t" +
-                        rs.getString("epost") + "\t" +
-                        rs.getString("kommentar"));
+                System.out.println(rs.getInt("customerNr") +  "\t" +
+                        rs.getString("firstName") + "\t" +
+                        rs.getString("lastName") + "\t" +
+                        rs.getString("streetAddress") + "\t" +
+                        rs.getString("postalCode") + "\t" +
+                        rs.getString("city") + "\t" +
+                        rs.getString("country") + "\t" +
+                        rs.getString("telephone") + "\t" +
+                        rs.getString("email") + "\t" +
+                        rs.getInt("vip"));
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void selectAllBookings(){
+        String sql = "SELECT * FROM booking";
+
+        try {
+            Connection conn = connect();
+            Statement stmt  = conn.createStatement();
+            ResultSet rs    = stmt.executeQuery(sql);
+
+            // loop through the result set
+            while (rs.next()) {
+                System.out.println(rs.getInt("bookingNr") +  "\t" +
+                        rs.getString("bookingDate") + "\t" +
+                        rs.getString("pickupDate") + "\t" +
+                        rs.getString("returnDate") + "\t" +
+                        rs.getInt("pricePerDay") + "\t" +
+                        rs.getInt("customerNr") + "\t" +
+                        rs.getString("carRegNr"));
 
             }
         } catch (SQLException e) {
@@ -119,20 +175,42 @@ public class Main {
     }
 
 
-    private static void insertBokning(String bokningsDatum, String upphamtning, String aterlamning, int prisPerDag, int kundNr, String hyrbilsregNr) {
-        String sql = "INSERT INTO hyrbilsbokning(bokningsDatum, upphamtning, aterlamning, prisPerDag, kundNr, hyrbilsregNr) VALUES(?,?,?,?,?,?)";
+
+    private static void insertBooking(String bookingDate, String pickupDate, String returnDate, int pricePerDay, int customerNr, String carRegNr) {
+        String sql = "INSERT INTO booking(bookingDate, pickupDate, returnDate, pricePerDay, customerNr, carRegNr) VALUES(?,?,?,?,?,?)";
 
         try{
             Connection conn = connect();
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, bokningsDatum);
-            pstmt.setString(2, upphamtning);
-            pstmt.setString(3, aterlamning);
-            pstmt.setInt(4, prisPerDag);
-            pstmt.setInt(5, kundNr);
-            pstmt.setString(6, hyrbilsregNr);
+            pstmt.setString(1, bookingDate);
+            pstmt.setString(2, pickupDate);
+            pstmt.setString(3, returnDate);
+            pstmt.setInt(4, pricePerDay);
+            pstmt.setInt(5, customerNr);
+            pstmt.setString(6, carRegNr);
             pstmt.executeUpdate();
-            System.out.println("Du har lagt till en ny bokning");
+            System.out.println("You have added a new booking!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void insertCustomer(String firstName, String lastName, String streetAddress, int postalCode, String city, String country, String telephone, String email) {
+        String sql = "INSERT INTO customer (firstName, lastName, streetAddress, postalCode, city, country, telephone, email) VALUES(?,?,?,?,?,?,?,?)";
+
+        try{
+            Connection conn = connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setString(3, streetAddress);
+            pstmt.setInt(4, postalCode);
+            pstmt.setString(5, city);
+            pstmt.setString(6, country);
+            pstmt.setString(5, telephone);
+            pstmt.setString(6, email);
+            pstmt.executeUpdate();
+            System.out.println("You have added a new customer!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -160,57 +238,60 @@ public class Main {
         }
     }
 
-    private static void delete(int bokningsNr) {
-        String sql = "DELETE * FROM hyrbilsbokning WHERE bokningsNr = ?";
+    private static void deleteBooking(int bookingNr) {
+        String sql = "DELETE * FROM booking WHERE bookingNr = ?";
 
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             // set the corresponding param
-            pstmt.setInt(1, bokningsNr);
+            pstmt.setInt(1, bookingNr);
             // execute the delete statement
             pstmt.executeUpdate();
-            System.out.println("Du har tagit bort bokningen");
+            System.out.println("You have successfully deleted the booking number" + bookingNr);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
+
     public static void main(String[] args) {
 
         boolean quit = false;
-        printActions();
+        printMainMenu();
         while(!quit) {
-            System.out.println("\nVälj (5 för att visa val):");
-            int action = Integer.parseInt(scanner.nextLine());
+            int selection = testInput();
 
-            switch (action) {
+            switch (selection) {
                 case 0:
-                    System.out.println("\nStänger ner...");
+                    System.out.println("\nQuitting...");
                     quit = true;
                     break;
-
                 case 1:
-                    selectAll();
+                    selectAllCustomers();
                     break;
-
                 case 2:
-                    insertBokning();
+                    selectAllBookings();
                     break;
-
                 case 3:
-                    System.out.println("Ange kundnumret för den kund som du vill uppdatera:");
-                    int kundNr = Integer.parseInt(scanner.nextLine());
-                    update();
+                    insertCustomer();
                     break;
-
                 case 4:
-                    //delete(1);
-                    deleteBokning();
+                    insertBooking();
                     break;
-
                 case 5:
-                    printActions();
+                    updateCustomer();
+
+                    printMainMenu();
+                    break;
+                case 6:
+                   //updateBooking();
+                    break;
+                case 7:
+                    deleteBooking();
+                    break;
+                case 8:
+                    //showInvoiceInformation();
                     break;
             }
         }
