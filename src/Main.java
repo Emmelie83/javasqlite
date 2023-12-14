@@ -26,11 +26,16 @@ public class Main {
                 "4  - Create a booking\n" +
                 "5  - Update customer information\n" +
                 "6  - Update booking information\n" +
-                "7  - Delete a booking\n" +
-                "8  - Mark a customer as VIP\n" +
-                "9  - Show invoice information\n");
-        System.out.println("Enter your choice: ");
+                "7  - Delete a customer\n" +
+                "8  - Delete a booking\n" +
+                "9 -  Show invoice information\n" +
+                "10 - Show a customer\n" +
+                "11 - Mark a customer as VIP\n" +
+                "12 - Show all VIP customers\n" +
+                "13 - Count number of VIP customers\n" +
+                "14 - Print main menu\n");
     }
+
 
     private static int testNumInput() {
         int choice = -1;
@@ -38,7 +43,7 @@ public class Main {
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (Exception e) {
-                System.out.println("Error: You have to input a number.");
+                System.out.println("Wrong input: You have to input a number.");
             }
         }
         return choice;
@@ -138,7 +143,6 @@ public class Main {
             case 0:
                 return;
         }
-
     }
 
 
@@ -214,6 +218,11 @@ public class Main {
         updateEmail(email, customerNr);
     }
 
+    private static void deleteCustomer(){
+        System.out.println("Insert customer number for the customer you want to delete: ");
+        int customerNr = testNumInput();
+        deleteCustomer(customerNr);
+    }
 
     private static void deleteBooking(){
         System.out.println("Insert booking number for the booking you want to delete: ");
@@ -221,6 +230,17 @@ public class Main {
         deleteBooking(bookingNr);
     }
 
+    private static void showCustomer(){
+        System.out.println("Insert phone number for the customer you want to see: ");
+        String phone = scanner.nextLine();
+        showCustomer(phone);
+    }
+
+    private static void markCustomerAsVip() {
+        System.out.println("Insert customer number: ");
+        int customerNr = testNumInput();
+        markCustomerAsVip(customerNr);
+    }
 
 
     private static void selectAllCustomers(){
@@ -242,7 +262,7 @@ public class Main {
                         rs.getString("country") + "\t" +
                         rs.getString("telephone") + "\t" +
                         rs.getString("email") + "\t" +
-                        rs.getInt("vip"));
+                        rs.getString("vip"));
 
             }
         } catch (SQLException e) {
@@ -426,7 +446,7 @@ public class Main {
             pstmt.setInt(2, bookingNr);
             // update
             pstmt.executeUpdate();
-            System.out.println("You have successfully updated the booking!");
+            System.out.println("You have successfully updated the pickup date!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -444,7 +464,7 @@ public class Main {
             pstmt.setInt(2, bookingNr);
             // update
             pstmt.executeUpdate();
-            System.out.println("You have successfully updated the booking!");
+            System.out.println("You have successfully updated the return date!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -462,7 +482,7 @@ public class Main {
             pstmt.setInt(2, bookingNr);
             // update
             pstmt.executeUpdate();
-            System.out.println("You have successfully updated the booking!");
+            System.out.println("You have successfully updated the price per day!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -475,12 +495,11 @@ public class Main {
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // set the corresponding param
             pstmt.setString(1, carRegNr);
             pstmt.setInt(2, bookingNr);
-            // update
+
             pstmt.executeUpdate();
-            System.out.println("You have successfully updated the booking!");
+            System.out.println("You have successfully updated the chosen car!");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -508,6 +527,22 @@ public class Main {
         }
     }
 
+    private static void deleteCustomer(int customerNr) {
+        String sql = "DELETE * FROM booking WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setInt(1, customerNr);
+            // execute the delete statement
+            pstmt.executeUpdate();
+            System.out.println("You have successfully deleted the customer number " + customerNr + "!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     private static void deleteBooking(int bookingNr) {
         String sql = "DELETE * FROM booking WHERE bookingNr = ?";
 
@@ -524,13 +559,118 @@ public class Main {
         }
     }
 
+    private static void showCustomer(String telephone) {
+        String sql = "SELECT * FROM customer WHERE telephone = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, telephone);
+
+            // execute the query
+            ResultSet rs = pstmt.executeQuery();
+
+            // retrieve data from the result set
+            while (rs.next()) {
+                System.out.println(rs.getInt("customerNr") + "\t" +
+                        rs.getString("firstName") + "\t" +
+                        rs.getString("lastName") + "\t" +
+                        rs.getString("streetAddress") + "\t" +
+                        rs.getString("postalCode") + "\t" +
+                        rs.getString("city") + "\t" +
+                        rs.getString("country") + "\t" +
+                        rs.getString("telephone") + "\t" +
+                        rs.getString("email") + "\t" +
+                        rs.getString("vip"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void markCustomerAsVip(int customerNr) {
+        String sql = "UPDATE customer SET vip = ?"
+                + "WHERE customerNr = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, "Yes");
+            pstmt.setInt(2, customerNr);
+            // update
+            pstmt.executeUpdate();
+            System.out.println("You have successfully set the customer as VIP!");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void showAllVipCustomers(){
+        String sql = "SELECT * FROM customer WHERE vip = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, "Yes");
+
+            // execute the query
+            ResultSet rs = pstmt.executeQuery();
+
+            // retrieve data from the result set
+            while (rs.next()) {
+                System.out.println(rs.getInt("customerNr") + "\t" +
+                        rs.getString("firstName") + "\t" +
+                        rs.getString("lastName") + "\t" +
+                        rs.getString("streetAddress") + "\t" +
+                        rs.getString("postalCode") + "\t" +
+                        rs.getString("city") + "\t" +
+                        rs.getString("country") + "\t" +
+                        rs.getString("telephone") + "\t" +
+                        rs.getString("email") + "\t" +
+                        rs.getString("vip"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void countVipCustomers() {
+        String sql = "SELECT COUNT(*) as vipCount FROM customer WHERE vip = ?";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // set the corresponding param
+            pstmt.setString(1, "Yes");
+
+            // execute the query
+            ResultSet rs = pstmt.executeQuery();
+
+            // retrieve data from the result set
+            if (rs.next()) {
+                int vipCount = rs.getInt("vipCount");
+                System.out.println("Number of VIP customers: " + vipCount);
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
 
     public static void main(String[] args) {
 
         boolean quit = false;
         printMainMenu();
         while(!quit) {
-            printMainMenu();
+            System.out.println("\nWhat do you want to do?\n" +
+                    "(Press 9 to see the menu options again.)\n" +
+                    "Enter your choice:");
             int selection = testNumInput();
             switch (selection) {
                 case 0:
@@ -556,12 +696,27 @@ public class Main {
                     updateBooking();
                     break;
                 case 7:
-                    deleteBooking();
+                    deleteCustomer();
                     break;
                 case 8:
-                    //showInvoiceInformation();
+                    deleteBooking();
                     break;
                 case 9:
+                    //showInvoiceInformation();
+                    break;
+                case 10:
+                    showCustomer();
+                    break;
+                case 11:
+                    markCustomerAsVip();
+                    break;
+                case 12:
+                    showAllVipCustomers();
+                    break;
+                case 13:
+                    countVipCustomers();
+                    break;
+                case 14:
                     printMainMenu();
                     break;
             }
