@@ -23,14 +23,14 @@ public class Main {
                 "1  - Show all customers\n" +
                 "2  - Show all bookings\n" +
                 "3  - Add a customer\n" +
-                "4  - Create a booking\n" +
+                "4  - Make a booking\n" +
                 "5  - Update customer information\n" +
                 "6  - Update booking information\n" +
                 "7  - Delete a customer\n" +
                 "8  - Delete a booking\n" +
-                "9 -  Show invoice information\n" +
+                "9 -  Show available cars of a certain category\n" +
                 "10 - Show a customer\n" +
-                "11 - Mark a customer as VIP\n" +
+                "11 - Set a customer as VIP\n" +
                 "12 - Show all VIP customers\n" +
                 "13 - Count number of VIP customers\n" +
                 "14 - Print main menu\n");
@@ -228,6 +228,16 @@ public class Main {
         System.out.println("Insert booking number for the booking you want to delete: ");
         int bookingNr = testNumInput();
         deleteBooking(bookingNr);
+    }
+
+    private static void showAvailableCars() {
+        System.out.println("Insert category name: ");
+        String categoryName = scanner.nextLine();
+        System.out.println("Insert start date: ");
+        String startDate = scanner.nextLine();
+        System.out.println("Insert end date: ");
+        String endDate = scanner.nextLine();
+        showAvailableCars(categoryName, startDate, endDate);
     }
 
     private static void showCustomer(){
@@ -505,27 +515,6 @@ public class Main {
         }
     }
 
-    private static void update(String forfattare, String titel, int pris, int id) {
-        String sql = "UPDATE bok SET bokForfattare = ? , "
-                + "bokTitel = ? , "
-                + "bokPris = ? "
-                + "WHERE bokId = ?";
-
-        try (Connection conn = connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            // set the corresponding param
-            pstmt.setString(1, forfattare);
-            pstmt.setString(2, titel);
-            pstmt.setInt(3, pris);
-            pstmt.setInt(4, id);
-            // update
-            pstmt.executeUpdate();
-            System.out.println("Du har uppdaterat vald bok");
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 
     private static void deleteCustomer(int customerNr) {
         String sql = "DELETE * FROM booking WHERE customerNr = ?";
@@ -662,6 +651,52 @@ public class Main {
         }
     }
 
+    private static void showAvailableCars(String categoryName, String startDate, String endDate) {
+
+        String sql = "SELECT rc.regNr, rc.brand, rc.color, cc.categoryName, cc.pricePerDay " +
+                "FROM rentalCar rc " +
+                "JOIN carCategory cc ON rc.carCategoryNr = cc.categoryNr " +
+                "WHERE cc.categoryName = ? AND rc.regNr NOT IN (" +
+                "    SELECT DISTINCT b.carRegNr " +
+                "    FROM booking b " +
+                "    WHERE (" +
+                "        (b.pickupDate BETWEEN ? AND ?) " +
+                "        OR (b.returnDate BETWEEN ? AND ?) " +
+                "    ) " +
+                "    OR (" +
+                "        (? BETWEEN b.pickupDate AND b.returnDate) " +
+                "        OR (? BETWEEN b.pickupDate AND b.returnDate) " +
+                "    )" +
+                ")";
+
+        try (Connection conn = connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, categoryName);
+            pstmt.setString(2, startDate);
+            pstmt.setString(3, endDate);
+            pstmt.setString(4, startDate);
+            pstmt.setString(5, endDate);
+            pstmt.setString(6, startDate);
+            pstmt.setString(7, endDate);
+
+            ResultSet rs = pstmt.executeQuery();;
+
+            while (rs.next()) {
+                // Retrieve and print results
+                System.out.println(
+                        rs.getString("regNr") + "\t" +
+                                rs.getString("brand") + "\t" +
+                                rs.getString("color") + "\t" +
+                                rs.getString("categoryName") + "\t" +
+                                rs.getInt("pricePerDay")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+}
+
+
 
     public static void main(String[] args) {
 
@@ -669,7 +704,7 @@ public class Main {
         printMainMenu();
         while(!quit) {
             System.out.println("\nWhat do you want to do?\n" +
-                    "(Press 9 to see the menu options again.)\n" +
+                    "(Input 14 to see the menu options again.)\n" +
                     "Enter your choice:");
             int selection = testNumInput();
             switch (selection) {
@@ -702,7 +737,7 @@ public class Main {
                     deleteBooking();
                     break;
                 case 9:
-                    //showInvoiceInformation();
+                    showAvailableCars();
                     break;
                 case 10:
                     showCustomer();
