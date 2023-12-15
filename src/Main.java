@@ -1,9 +1,16 @@
-import java.awt.print.Book;
+import com.emmeliejohansson.repositories.BookingRepository;
+import com.emmeliejohansson.repositories.CustomerRepository;
+import com.emmeliejohansson.services.AvailableCarsService;
+import com.emmeliejohansson.services.BookingService;
+import com.emmeliejohansson.services.CustomerService;
+import com.emmeliejohansson.services.UserInputHandler;
+
 import java.util.Scanner;
 
 public class Main {
 
     private static Scanner scanner = new Scanner(System.in);
+    private static UserInputHandler userInputHandler = new UserInputHandler();
 
 
     private static void printMainMenu() {
@@ -25,47 +32,38 @@ public class Main {
                 "14 - Print main menu\n");
     }
 
-    private static int testNumInput() {
-        int choice = -1;
-        while (choice == -1) {
-            try {
-                choice = Integer.parseInt(scanner.nextLine());
-            } catch (Exception e) {
-                System.out.println("Wrong input: You have to input a number.");
-            }
-        }
-        return choice;
-    }
 
     public static void main(String[] args) {
-        Booking booking = new Booking();
-        Customer customer = new Customer();
-        SqlQueries sqlQueries = new SqlQueries();
+        CustomerService customerService = new CustomerService();
+        BookingService bookingService = new BookingService();
+        CustomerRepository customerRepository = new CustomerRepository();
+        BookingRepository bookingRepository = new BookingRepository();
+        AvailableCarsService availableCarsService = new AvailableCarsService();
         boolean quit = false;
         printMainMenu();
         while(!quit) {
             System.out.println("\nWhat do you want to do?\n" +
                     "(Input 14 to see the menu options again.)\n" +
                     "Enter your choice:");
-            int selection = testNumInput();
+            int selection = userInputHandler.readIntInput();
             switch (selection) {
                 case 0 -> {
                     System.out.println("\nQuitting...");
                     quit = true;
                 }
-                case 1 -> sqlQueries.selectAllCustomers();
-                case 2 -> sqlQueries.selectAllBookings();
-                case 3 -> customer.insertCustomer();
-                case 4 -> booking.insertBooking();
-                case 5 -> customer.updateCustomer();
-                case 6 -> booking.updateBooking();
-                case 7 -> customer.deleteCustomer();
-                case 8 -> booking.deleteBooking();
-                case 9 -> booking.showAvailableCars();
-                case 10 -> customer.showCustomer();
-                case 11 -> customer.markCustomerAsVip();
-                case 12 -> sqlQueries.showAllVipCustomers();
-                case 13 -> sqlQueries.countVipCustomers();
+                case 1 -> customerRepository.selectAllCustomers();
+                case 2 -> bookingRepository.selectAllBookings();
+                case 3 -> customerService.createAndInsertCustomer();
+                case 4 -> bookingService.createAndInsertBooking();
+                case 5 -> customerService.updateCustomer();
+                case 6 -> bookingService.updateBooking();
+                case 7 -> customerService.deleteCustomer();
+                case 8 -> bookingService.deleteBooking();
+                case 9 -> availableCarsService.showAvailableCars();
+                case 10 -> customerService.showCustomer();
+                case 11 -> customerService.markCustomerAsVip();
+                case 12 -> customerRepository.showAllVipCustomers();
+                case 13 -> customerRepository.countVipCustomers();
                 case 14 -> printMainMenu();
                 default -> System.out.println("You have to enter a number between 1 and 14, or 0 to quit.");
             }
