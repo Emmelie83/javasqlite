@@ -39,22 +39,18 @@ public class BookingService {
     public void updateBooking() {
         System.out.println("Booking ID for the booking you want to update:");
         int bookingId = userInputHandler.readIntInput();
-        int selection = -1;
-        while(selection < 0 || selection > 4) {
-            printUpdateBookingMenu();
-            selection = userInputHandler.readIntInput();
-            switch (selection) {
-                case 0 -> {
-                    return;
-                }
-                case 1 -> updatePickupDate(bookingId);
-                case 2 -> updateReturnDate(bookingId);
-                case 3 -> updatePricePerDay(bookingId);
-                case 4 -> updateCarRegNr(bookingId);
-                default -> System.out.println("You have to enter a number between 1 and 4, or 0 to go back.");
+        printUpdateBookingMenu();
+        int selection = userInputHandler.readIntInput();
+        switch (selection) {
+            case 0 -> {
+                return;
             }
+            case 1 -> updatePickupDate(bookingId);
+            case 2 -> updateReturnDate(bookingId);
+            case 3 -> updatePricePerDay(bookingId);
+            case 4 -> updateCarRegNr(bookingId);
+            default -> System.out.println("You have to enter a number between 1 and 4, or 0 to go back.");
         }
-
     }
 
     private void printUpdateBookingMenu() {

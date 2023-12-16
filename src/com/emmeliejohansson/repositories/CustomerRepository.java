@@ -27,7 +27,6 @@ public class CustomerRepository {
         } catch (SQLException e){
             System.out.println("Error showing the VIP customers: " + e.getMessage());
         }
-
         return customers;
     }
 
@@ -40,7 +39,6 @@ public class CustomerRepository {
             pstmt.setInt(1, cId);
 
             ResultSet rs = pstmt.executeQuery();
-
             while (rs.next()) {
                 return mapResultSetToCustomer(rs);
             }

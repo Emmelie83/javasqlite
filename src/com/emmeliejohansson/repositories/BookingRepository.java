@@ -40,14 +40,11 @@ public class BookingRepository {
 
             ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
                 return mapResultSetToBooking(rs);
-            }
         } catch (SQLException e) {
             System.out.println("Error retrieving booking by ID: " + e.getMessage());
             return null;
         }
-        return null;
     }
 
     //endregion
