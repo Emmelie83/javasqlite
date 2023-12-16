@@ -1,17 +1,19 @@
 package com.emmeliejohansson.repositories;
 
 import com.emmeliejohansson.data.DatabaseManager;
+import com.emmeliejohansson.data.entities.AvailableCar;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class AvailableCarsRepository {
     
     DatabaseManager databaseManager = new DatabaseManager();
-    public void showAvailableCars(String categoryName, String startDate, String endDate) {
-
+    public ArrayList<AvailableCar> getAvailableCars(String categoryName, String startDate, String endDate) {
+        ArrayList<AvailableCar> availableCars = new ArrayList<>();
         String sql = "SELECT rc.regNr, rc.brand, rc.color, cc.categoryName, cc.pricePerDay " +
                 "FROM rentalCar rc " +
                 "JOIN carCategory cc ON rc.carCategoryId = cc.categoryId " +
@@ -39,19 +41,22 @@ public class AvailableCarsRepository {
             pstmt.setString(7, endDate);
 
             ResultSet rs = pstmt.executeQuery();
-            ;
-
             while (rs.next()) {
-                System.out.println(
-                        rs.getString("regNr") + "\t" +
-                                rs.getString("brand") + "\t" +
-                                rs.getString("color") + "\t" +
-                                rs.getString("categoryName") + "\t" +
-                                rs.getInt("pricePerDay")
-                );
+                AvailableCar availableCar = mapResultSetToAvailableCar(rs);
+                if (availableCar != null) availableCars.add(availableCar);
             }
         } catch (SQLException e) {
-            System.out.println("\nError retrieving available cars: " + e.getMessage());
+            System.out.println("Error selecting all available cars: " + e.getMessage());
         }
+        return availableCars;
+    }
+
+    private AvailableCar mapResultSetToAvailableCar(ResultSet rs) throws SQLException {
+        String regNr = rs.getString("regNr");
+        String brand = rs.getString("brand");
+        String color = rs.getString("color");
+        String categoryName = rs.getString("categoryName");
+        int pricePerDay = rs.getInt("pricePerDay");
+        return new AvailableCar(regNr, brand, color, categoryName, pricePerDay);
     }
 }

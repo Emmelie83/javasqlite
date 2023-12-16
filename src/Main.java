@@ -51,19 +51,19 @@ public class Main {
                     System.out.println("\nQuitting...");
                     quit = true;
                 }
-                case 1 -> customerRepository.selectAllCustomers();
-                case 2 -> bookingRepository.selectAllBookings();
+                case 1 -> customerService.showAllCustomers();
+                case 2 -> bookingService.showAllBookings();
                 case 3 -> customerService.createAndInsertCustomer();
                 case 4 -> bookingService.createAndInsertBooking();
                 case 5 -> customerService.updateCustomer();
                 case 6 -> bookingService.updateBooking();
                 case 7 -> customerService.deleteCustomer();
                 case 8 -> bookingService.deleteBooking();
-                case 9 -> availableCarsService.showAvailableCars();
-                case 10 -> customerService.showCustomer();
+                case 9 -> availableCarsService.showAllAvailableCars();
+                case 10 -> customerService.showCustomerByTelephone();
                 case 11 -> customerService.markCustomerAsVip();
-                case 12 -> customerRepository.showAllVipCustomers();
-                case 13 -> customerRepository.countVipCustomers();
+                case 12 -> customerService.showVipCustomers();
+                case 13 -> customerService.countVipCustomers();
                 case 14 -> printMainMenu();
                 default -> System.out.println("You have to enter a number between 1 and 14, or 0 to quit.");
             }

@@ -5,14 +5,34 @@ import com.emmeliejohansson.data.entities.Booking;
 import com.emmeliejohansson.data.entities.Customer;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class BookingRepository {
     
     DatabaseManager databaseManager = new DatabaseManager();
 
+    //region get
+
+    public ArrayList<Booking> getAllBookings() {
+        String sql = "SELECT * FROM booking";
+        ArrayList<Booking> bookings = new ArrayList<>();
+        try {
+            Connection conn = databaseManager.connect();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                Booking booking = mapResultSetToBooking(rs);
+                if (booking != null) bookings.add(booking);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error selecting all bookings: " + e.getMessage());
+        }
+        return bookings;
+    }
+
     public Booking getBookingById(int bId) {
         String sql = "SELECT * FROM booking WHERE bookingId = ?";
-
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -21,14 +41,7 @@ public class BookingRepository {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                int bookingId = rs.getInt("bookingId");
-                String bookingDate = rs.getString("bookingDate");
-                String pickupDate = rs.getString("pickupDate");
-                String returnDate = rs.getString("returnDate");
-                int pricePerDay = rs.getInt("pricePerDay");
-                int customerId = rs.getInt("customerId");
-                String carRegNr = rs.getString("carRegNr");
-                return new Booking(bookingId, bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr);
+                return mapResultSetToBooking(rs);
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving booking by ID: " + e.getMessage());
@@ -37,29 +50,7 @@ public class BookingRepository {
         return null;
     }
 
-    public void selectAllBookings() {
-        String sql = "SELECT * FROM booking";
-
-        try {
-            Connection conn = databaseManager.connect();
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-
-            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getInt("bookingId") + "\t" +
-                        rs.getString("bookingDate") + "\t" +
-                        rs.getString("pickupDate") + "\t" +
-                        rs.getString("returnDate") + "\t" +
-                        rs.getInt("pricePerDay") + "\t" +
-                        rs.getInt("customerId") + "\t" +
-                        rs.getString("carRegNr"));
-
-            }
-        } catch (SQLException e) {
-            System.out.println("Error selecting all bookings: " + e.getMessage());
-        }
-    }
+    //endregion
 
     public void insertBooking(Booking b) {
         String sql = "INSERT INTO booking(bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr) VALUES(?,?,?,?,?,?)";
@@ -97,12 +88,11 @@ public class BookingRepository {
             pstmt.setInt(7, b.getBookingId());
 
             pstmt.executeUpdate();
-            System.out.println("You have successfully updated booking " + b.getBookingId());
+            System.out.println("You have successfully updated booking " + b.getBookingId() + "!");
         } catch (SQLException e) {
             System.out.println("Error updating the booking: " + e.getMessage());
         }
     }
-
 
     public void deleteBooking(int bookingId) {
         String sql = "DELETE FROM booking WHERE bookingId = ?";
@@ -111,10 +101,20 @@ public class BookingRepository {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, bookingId);
             pstmt.executeUpdate();
-            System.out.println("You have successfully deleted booking " + bookingId);
+            System.out.println("You have successfully deleted booking " + bookingId + "!");
         } catch (SQLException e) {
             System.out.println("Error deleting the booking: " + e.getMessage());
         }
     }
 
+    private Booking mapResultSetToBooking(ResultSet rs) throws SQLException {
+        int bookingId = rs.getInt("bookingId");
+        String bookingDate = rs.getString("bookingDate");
+        String pickupDate = rs.getString("pickupDate");
+        String returnDate = rs.getString("returnDate");
+        int pricePerDay = rs.getInt("pricePerDay");
+        int customerId = rs.getInt("customerId");
+        String carRegNr = rs.getString("carRegNr");
+        return new Booking(bookingId, bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr);
+    }
 }

@@ -1,14 +1,22 @@
 package com.emmeliejohansson.services;
-
 import com.emmeliejohansson.data.entities.Booking;
 import com.emmeliejohansson.repositories.BookingRepository;
+
+import java.util.ArrayList;
 
 public class BookingService {
 
     private UserInputHandler userInputHandler = new UserInputHandler();
     private BookingRepository bookingRepository = new BookingRepository();
 
-    public Booking getNewBooking() {
+    //region create
+
+    public void createAndInsertBooking() {
+        Booking booking = createBooking();
+        bookingRepository.insertBooking(booking);
+    }
+
+    private Booking createBooking() {
         System.out.println("Booking date (YYYY-MM-DD):");
         String bookingDate = userInputHandler.readStringInput();
         System.out.println("Pickup date (YYYY-MM-DD):");
@@ -24,11 +32,9 @@ public class BookingService {
         return new Booking(bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr);
     }
 
-    public void createAndInsertBooking() {
-        Booking booking = getNewBooking();
-        bookingRepository.insertBooking(booking);
-    }
+    //endregion
 
+    //region update
 
     public void updateBooking() {
         System.out.println("Booking ID for the booking you want to update:");
@@ -51,7 +57,6 @@ public class BookingService {
 
     }
 
-
     private void printUpdateBookingMenu() {
         System.out.println("\nWhat do you want to update?:\n");
         System.out.println(
@@ -69,7 +74,7 @@ public class BookingService {
         if (booking != null) {
             booking.setPickupDate(pickupDate);
             bookingRepository.updateBooking(booking);
-        }
+        } else System.out.println("No booking found.");
     }
 
     public void updateReturnDate(int bookingId) {
@@ -79,9 +84,8 @@ public class BookingService {
         if (booking != null) {
             booking.setReturnDate(returnDate);
             bookingRepository.updateBooking(booking);
-        }
+        } else System.out.println("No booking found.");
     }
-
 
     private void updatePricePerDay(int bookingId) {
         System.out.println("New price per day:");
@@ -90,7 +94,7 @@ public class BookingService {
         if (booking != null) {
             booking.setPricePerDay(pricePerDay);
             bookingRepository.updateBooking(booking);
-        }
+        } else System.out.println("No booking found.");
     }
 
     private void updateCarRegNr(int bookingId) {
@@ -100,12 +104,35 @@ public class BookingService {
         if (booking != null) {
             booking.setCarRegNr(carRegNr);
             bookingRepository.updateBooking(booking);
-        }
+        } else System.out.println("No booking found.");
     }
+
+    //endregion
 
     public void deleteBooking(){
         System.out.println("Insert booking ID for the booking you want to delete: ");
         int bookingId = userInputHandler.readIntInput();
         bookingRepository.deleteBooking(bookingId);
+    }
+
+    public void showAllBookings(){
+        showBookings(bookingRepository.getAllBookings());
+    }
+
+    private void showBookings(ArrayList<Booking> bookings) {
+        if (bookings.isEmpty()) {
+            System.out.println("No booking found.");
+        }
+        for (int i = 0; i < bookings.size(); i++) {
+            Booking b = bookings.get(i);
+            System.out.println(b.getBookingId() + "\t" +
+                    b.getBookingDate() + "\t" +
+                    b.getPickupDate() + "\t" +
+                    b.getReturnDate() + "\t" +
+                    b.getPricePerDay() + "\t" +
+                    b.getCustomerId() + "\t" +
+                    b.getCarRegNr() + "\t"
+            );
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.emmeliejohansson.data.entities;
 
+import com.emmeliejohansson.data.enums.CustomerEnums;
+
 public class Customer {
     private int customerId;
     private String firstName = "";
@@ -10,7 +12,7 @@ public class Customer {
     private String country = "";
     private String telephone = "";
     private String email = "";
-    private String vip = "";
+    private String vip = CustomerEnums.isNotVip.label;
 
     public Customer(String firstName, String lastName, String streetAddress, String postalCode, String city, String country, String telephone, String email) {
         this.firstName = firstName;
@@ -76,9 +78,6 @@ public class Customer {
         return vip;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;

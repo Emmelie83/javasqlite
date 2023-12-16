@@ -1,13 +1,21 @@
 package com.emmeliejohansson.services;
 
 import com.emmeliejohansson.data.entities.Customer;
+import com.emmeliejohansson.data.enums.CustomerEnums;
 import com.emmeliejohansson.repositories.CustomerRepository;
+import java.util.ArrayList;
 
 public class CustomerService {
     private UserInputHandler userInputHandler = new UserInputHandler();
     private CustomerRepository customerRepository = new CustomerRepository();
 
-    public Customer getNewCustomer() {
+    //region create
+
+    public void createAndInsertCustomer() {
+        Customer customer = createCustomer();
+        customerRepository.insertCustomer(customer);
+    }
+    private Customer createCustomer() {
         System.out.println("First Name:");
         String firstName = userInputHandler.readStringInput();
         System.out.println("Last Name:");
@@ -28,11 +36,10 @@ public class CustomerService {
 
     }
 
-    public void createAndInsertCustomer() {
-        Customer customer = getNewCustomer();
-        customerRepository.insertCustomer(customer);
-    }
+    //endregion
 
+
+    //region update
 
     public void updateCustomer() {
         System.out.println("Customer ID for the customer you want to update:");
@@ -73,7 +80,7 @@ public class CustomerService {
         if (customer != null) {
             customer.setFirstName(firstName);
             customerRepository.updateCustomer(customer);
-        }
+        } else System.out.println("No customer found.");
     }
 
     public void updateLastName(int customerId) {
@@ -83,7 +90,7 @@ public class CustomerService {
         if (customer != null) {
             customer.setLastName(lastName);
             customerRepository.updateCustomer(customer);
-        }
+        } else System.out.println("No customer found.");
     }
 
     public void updateAddress(int customerId) {
@@ -102,7 +109,7 @@ public class CustomerService {
             customer.setCity(city);
             customer.setCountry(country);
             customerRepository.updateCustomer(customer);
-        }
+        } else System.out.println("No customer found.");
     }
 
     private void updateTelephone(int customerId) {
@@ -112,7 +119,7 @@ public class CustomerService {
         if (customer != null) {
             customer.setTelephone(telephone);
             customerRepository.updateCustomer(customer);
-        }
+        } else System.out.println("No customer found.");
     }
 
     private void updateEmail(int customerId) {
@@ -122,24 +129,69 @@ public class CustomerService {
         if (customer != null) {
             customer.setEmail(email);
             customerRepository.updateCustomer(customer);
+        } else System.out.println("No customer found.");
+    }
+
+    public void markCustomerAsVip() {
+        System.out.println("Customer ID:");
+        int customerId = userInputHandler.readIntInput();
+        Customer customer = customerRepository.getCustomerById(customerId);
+        if (customer != null) {
+            customer.setVip(CustomerEnums.isVip.label);
+            customerRepository.updateCustomer(customer);
+        } else System.out.println("No customer found.");
+    }
+
+    //endregion
+
+    //region show
+
+    public void showCustomerByTelephone(){
+        System.out.println("Insert phone number for the customer you want to see: ");
+        String phone = userInputHandler.readStringInput();
+        showCustomers(customerRepository.getCustomersByTelephone(phone));
+    }
+
+    public void showVipCustomers(){
+        String vip = CustomerEnums.isVip.label;
+        showCustomers(customerRepository.getCustomersByVip(vip));
+    }
+
+    public void countVipCustomers() {
+        int vipCount = customerRepository.getCustomersByVip(CustomerEnums.isVip.label).size();
+        System.out.println("Number of VIP customers: " + vipCount);
+    }
+
+    public void showAllCustomers(){
+        showCustomers(customerRepository.getAllCustomers());
+    }
+
+    private void showCustomers(ArrayList<Customer> customers) {
+        if (customers.isEmpty()) {
+            System.out.println("No customer found.");
+        }
+
+        for (int i = 0; i < customers.size(); i++) {
+            Customer c = customers.get(i);
+            System.out.println(c.getCustomerId() + "\t" +
+                    c.getFirstName() + "\t" +
+                    c.getLastName() + "\t" +
+                    c.getStreetAddress() + "\t" +
+                    c.getPostalCode() + "\t" +
+                    c.getCity() + "\t" +
+                    c.getCountry() + "\t" +
+                    c.getTelephone() + "\t" +
+                    c.getEmail() + "\t" +
+                    c.getVip()
+            );
         }
     }
+
+    //endregion
 
     public void deleteCustomer(){
         System.out.println("Insert customer number for the customer you want to delete: ");
         int customerId = userInputHandler.readIntInput();
         customerRepository.deleteCustomer(customerId);
-    }
-
-    public void showCustomer(){
-        System.out.println("Insert phone number for the customer you want to see: ");
-        String phone = userInputHandler.readStringInput();
-        customerRepository.showCustomer(phone);
-    }
-
-    public void markCustomerAsVip() {
-        System.out.println("Insert customer number: ");
-        int customerNr = userInputHandler.readIntInput();
-        customerRepository.markCustomerAsVip(customerNr);
     }
 }
