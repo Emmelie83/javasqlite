@@ -33,7 +33,7 @@ public class CustomerRepository {
                         return new Customer(customerId, firstName, lastName, streetAddress, postalCode, city, country, telephone, email, vip);
             }
         } catch (SQLException e) {
-            System.out.println("\nError retrieving customer information: " + e.getMessage());
+            System.out.println("Error retrieving customer information: " + e.getMessage());
             return null;
         }
         return null;
@@ -82,9 +82,9 @@ public class CustomerRepository {
             pstmt.setString(7, c.getTelephone());
             pstmt.setString(8, c.getEmail());
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully added a new customer!");
+            System.out.println("You have successfully added a new customer!");
         } catch (SQLException e) {
-            System.out.println("\nError adding a new customer: " + e.getMessage());
+            System.out.println("Error adding a new customer: " + e.getMessage());
         }
     }
 
@@ -106,11 +106,12 @@ public class CustomerRepository {
             pstmt.setString(7, c.getTelephone());
             pstmt.setString(8, c.getEmail());
             pstmt.setString(9, c.getVip());
+            pstmt.setInt(10,c.getCustomerId());
 
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully updated the customer " + c.getFirstName() + " " + c.getLastName());
+            System.out.println("You have successfully updated customer " + c.getCustomerId());
         } catch (SQLException e) {
-            System.out.println("\nError updating the customer: " + e.getMessage());
+            System.out.println("Error updating the customer: " + e.getMessage());
         }
     }
 
@@ -118,7 +119,7 @@ public class CustomerRepository {
 
 
     public void deleteCustomer(int customerId) {
-        String sql = "DELETE * FROM booking WHERE customerId = ?";
+        String sql = "DELETE FROM booking WHERE customerId = ?";
 
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -126,9 +127,9 @@ public class CustomerRepository {
             pstmt.setInt(1, customerId);
 
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully deleted the customer number " + customerId + "!");
+            System.out.println("You have successfully deleted customer " + customerId + "!");
         } catch (SQLException e) {
-            System.out.println("\nError deleting the customer: " + e.getMessage());
+            System.out.println("Error deleting the customer: " + e.getMessage());
         }
     }
 
@@ -139,13 +140,12 @@ public class CustomerRepository {
 
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
             pstmt.setString(1, telephone);
 
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println(rs.getInt("customerNr") + "\t" +
+                System.out.println(rs.getInt("customerId") + "\t" +
                         rs.getString("firstName") + "\t" +
                         rs.getString("lastName") + "\t" +
                         rs.getString("streetAddress") + "\t" +
@@ -157,22 +157,22 @@ public class CustomerRepository {
                         rs.getString("vip"));
             }
         } catch (SQLException e) {
-            System.out.println("\nError retrieving customer information: " + e.getMessage());
+            System.out.println("Error retrieving customer information: " + e.getMessage());
         }
     }
 
-    public void markCustomerAsVip(int customerNr) {
+    public void markCustomerAsVip(int customerId) {
         String sql = "UPDATE customer SET vip = ?"
-                + "WHERE customerNr = ?";
+                + "WHERE customerId = ?";
 
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, "Yes");
-            pstmt.setInt(2, customerNr);
+            pstmt.setInt(2, customerId);
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully set the customer as VIP!");
+            System.out.println("You have successfully set customer " + customerId + " as VIP!");
         } catch (SQLException e) {
-            System.out.println("\nError setting the customer as VIP: " + e.getMessage());
+            System.out.println("Error setting the customer as VIP: " + e.getMessage());
         }
     }
 
@@ -186,7 +186,7 @@ public class CustomerRepository {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println(rs.getInt("customerNr") + "\t" +
+                System.out.println(rs.getInt("customerId") + "\t" +
                         rs.getString("firstName") + "\t" +
                         rs.getString("lastName") + "\t" +
                         rs.getString("streetAddress") + "\t" +
@@ -198,7 +198,7 @@ public class CustomerRepository {
                         rs.getString("vip"));
             }
         } catch (SQLException e) {
-            System.out.println("\nError showing the VIP customers: " + e.getMessage());
+            System.out.println("Error showing the VIP customers: " + e.getMessage());
         }
     }
 
@@ -217,7 +217,7 @@ public class CustomerRepository {
                 System.out.println("Number of VIP customers: " + vipCount);
             }
         } catch (SQLException e) {
-            System.out.println("\nError counting the VIP customers: " + e.getMessage());
+            System.out.println("Error counting the VIP customers: " + e.getMessage());
         }
     }
 

@@ -17,8 +17,18 @@ public class Booking {
         this.pickupDate = pickupDate;
         this.returnDate = returnDate;
         this.pricePerDay = pricePerDay;
-        this.carRegNr = carRegNr;
         this.customerId = customerId;
+        this.carRegNr = carRegNr;
+    }
+
+    public Booking(int bookingId, String bookingDate, String pickupDate, String returnDate, int pricePerDay, int customerId, String carRegNr) {
+        this.bookingId = bookingId;
+        this.bookingDate = bookingDate;
+        this.pickupDate = pickupDate;
+        this.returnDate = returnDate;
+        this.pricePerDay = pricePerDay;
+        this.customerId = customerId;
+        this.carRegNr = carRegNr;
     }
 
     public int getBookingId() {

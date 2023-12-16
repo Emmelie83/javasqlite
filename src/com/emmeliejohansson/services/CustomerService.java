@@ -35,32 +35,30 @@ public class CustomerService {
 
 
     public void updateCustomer() {
-        System.out.println("Input customer number for the customer you want to update:");
+        System.out.println("Customer ID for the customer you want to update:");
         int customerId = userInputHandler.readIntInput();
-        printUpdateCustomerMenu();
-        int selection = userInputHandler.readIntInput();
-        switch (selection) {
-            case 1:
-                updateFirstName(customerId);
-                break;
-            case 2:
-                updateLastName(customerId);
-                break;
-            case 3:
-                updateAddress(customerId);
-                break;
-            case 4:
-                updateTelephone(customerId);
-                break;
-            case 5:
-                updateEmail(customerId);
-                break;
+        int selection = -1;
+        while(selection < 0 || selection > 4) {
+            printUpdateCustomerMenu();
+            selection = userInputHandler.readIntInput();
+            switch (selection) {
+                case 0 -> {
+                    return;
+                }
+                case 1 -> updateFirstName(customerId);
+                case 2 -> updateLastName(customerId);
+                case 3 -> updateAddress(customerId);
+                case 4 -> updateTelephone(customerId);
+                case 5 -> updateEmail(customerId);
+                default -> System.out.println("You have to enter a number between 1 and 5, or 0 to go back.");
+            }
         }
     }
 
     private void printUpdateCustomerMenu() {
         System.out.println("\nWhat do you want to update?:\n");
-        System.out.println("0  - Back\n" +
+        System.out.println(
+                "0  - Back\n" +
                 "1  - First name\n" +
                 "2  - Last name\n" +
                 "3  - Address\n" +

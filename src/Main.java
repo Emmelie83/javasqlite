@@ -21,10 +21,10 @@ public class Main {
                 "3  - Add a customer\n" +
                 "4  - Make a booking\n" +
                 "5  - Update customer information\n" +
-                "6  - Update booking information\n" +
+                "6  - Update a booking\n" +
                 "7  - Delete a customer\n" +
                 "8  - Delete a booking\n" +
-                "9 -  Show available cars of a certain category\n" +
+                "9 -  Show available cars\n" +
                 "10 - Show a customer\n" +
                 "11 - Set a customer as VIP\n" +
                 "12 - Show all VIP customers\n" +

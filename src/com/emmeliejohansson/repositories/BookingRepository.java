@@ -28,10 +28,10 @@ public class BookingRepository {
                 int pricePerDay = rs.getInt("pricePerDay");
                 int customerId = rs.getInt("customerId");
                 String carRegNr = rs.getString("carRegNr");
-                return new Booking(bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr);
+                return new Booking(bookingId, bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr);
             }
         } catch (SQLException e) {
-            System.out.println("\nError retrieving booking by ID: " + e.getMessage());
+            System.out.println("Error retrieving booking by ID: " + e.getMessage());
             return null;
         }
         return null;
@@ -74,16 +74,16 @@ public class BookingRepository {
             pstmt.setInt(5, b.getCustomerId());
             pstmt.setString(6, b.getCarRegNr());
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully added a new booking!");
+            System.out.println("You have successfully created a new booking!");
         } catch (SQLException e) {
-            System.out.println("\nError adding a new booking: " + e.getMessage());
+            System.out.println("Error adding a new booking: " + e.getMessage());
         }
     }
 
     public void updateBooking(Booking b) {
         if (b == null) return;
         String sql = "UPDATE booking SET (bookingDate, pickupDate, returnDate, pricePerDay, customerId, carRegNr)  = (?,?,?,?,?,?)"
-                + "WHERE customerId = ?";
+                + "WHERE bookingId = ?";
 
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -94,25 +94,26 @@ public class BookingRepository {
             pstmt.setInt(4, b.getPricePerDay());
             pstmt.setInt(5, b.getCustomerId());
             pstmt.setString(6, b.getCarRegNr());
+            pstmt.setInt(7, b.getBookingId());
 
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully updated the booking with ID " + b.getBookingId());
+            System.out.println("You have successfully updated booking " + b.getBookingId());
         } catch (SQLException e) {
-            System.out.println("\nError updating the booking: " + e.getMessage());
+            System.out.println("Error updating the booking: " + e.getMessage());
         }
     }
 
 
     public void deleteBooking(int bookingId) {
-        String sql = "DELETE * FROM booking WHERE bookingId = ?";
+        String sql = "DELETE FROM booking WHERE bookingId = ?";
 
         try (Connection conn = databaseManager.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, bookingId);
             pstmt.executeUpdate();
-            System.out.println("\nYou have successfully deleted the booking number" + bookingId);
+            System.out.println("You have successfully deleted booking " + bookingId);
         } catch (SQLException e) {
-            System.out.println("\nError deleting the booking: " + e.getMessage());
+            System.out.println("Error deleting the booking: " + e.getMessage());
         }
     }
 

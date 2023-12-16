@@ -14,7 +14,7 @@ public class AvailableCarsRepository {
 
         String sql = "SELECT rc.regNr, rc.brand, rc.color, cc.categoryName, cc.pricePerDay " +
                 "FROM rentalCar rc " +
-                "JOIN carCategory cc ON rc.carCategoryNr = cc.categoryNr " +
+                "JOIN carCategory cc ON rc.carCategoryId = cc.categoryId " +
                 "WHERE cc.categoryName = ? AND rc.regNr NOT IN (" +
                 "    SELECT DISTINCT b.carRegNr " +
                 "    FROM booking b " +

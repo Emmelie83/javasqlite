@@ -5,12 +5,13 @@ import java.util.Scanner;
 public class UserInputHandler {
     private static Scanner scanner = new Scanner(System.in);
 
+
     public static int readIntInput() {
         while (true) {
             try {
                 return Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Wrong input: You have to input a number.");
+            } catch (Exception e) {
+                System.out.println("You have to enter a number: ");
             }
         }
     }
