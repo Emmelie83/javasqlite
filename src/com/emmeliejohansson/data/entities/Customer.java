@@ -4,14 +4,14 @@ import com.emmeliejohansson.data.enums.CustomerEnums;
 
 public class Customer {
     private int customerId;
-    private String firstName = "";
-    private String lastName = "";
-    private String streetAddress = "";
-    private String postalCode = "";
-    private String city = "";
-    private String country = "";
-    private String telephone = "";
-    private String email = "";
+    private String firstName;
+    private String lastName;
+    private String streetAddress;
+    private String postalCode;
+    private String city;
+    private String country;
+    private String telephone;
+    private String email;
     private String vip = CustomerEnums.isNotVip.label;
 
     public Customer(String firstName, String lastName, String streetAddress, String postalCode, String city, String country, String telephone, String email) {
@@ -77,7 +77,6 @@ public class Customer {
     public String getVip() {
         return vip;
     }
-
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;

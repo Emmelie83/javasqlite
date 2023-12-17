@@ -3,10 +3,17 @@ package com.emmeliejohansson.services;
 import java.util.Scanner;
 
 public class UserInputHandler {
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Scanner scanner = new Scanner(System.in);
 
+    public int readMenuInput(int maxMenuSelection) {
+        int selection = readIntInput();
+        while (selection < 0 || selection > maxMenuSelection) {
+            System.out.println("You have to enter a number between 0 and " + maxMenuSelection);
+        }
+        return selection;
+    }
 
-    public static int readIntInput() {
+    public int readIntInput() {
         while (true) {
             try {
                 return Integer.parseInt(scanner.nextLine());
@@ -16,7 +23,7 @@ public class UserInputHandler {
         }
     }
 
-    public static String readStringInput() {
+    public String readStringInput() {
         return scanner.nextLine();
     }
 }

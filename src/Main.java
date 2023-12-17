@@ -1,17 +1,11 @@
-import com.emmeliejohansson.repositories.BookingRepository;
-import com.emmeliejohansson.repositories.CustomerRepository;
+
 import com.emmeliejohansson.services.AvailableCarsService;
 import com.emmeliejohansson.services.BookingService;
 import com.emmeliejohansson.services.CustomerService;
 import com.emmeliejohansson.services.UserInputHandler;
 
-import java.util.Scanner;
-
 public class Main {
-
-    private static Scanner scanner = new Scanner(System.in);
-    private static UserInputHandler userInputHandler = new UserInputHandler();
-
+    private static final UserInputHandler userInputHandler = new UserInputHandler();
 
     private static void printMainMenu() {
         System.out.println("\nOptions:\n");
@@ -32,12 +26,9 @@ public class Main {
                 "14 - Print main menu\n");
     }
 
-
     public static void main(String[] args) {
         CustomerService customerService = new CustomerService();
         BookingService bookingService = new BookingService();
-        CustomerRepository customerRepository = new CustomerRepository();
-        BookingRepository bookingRepository = new BookingRepository();
         AvailableCarsService availableCarsService = new AvailableCarsService();
         boolean quit = false;
         printMainMenu();
@@ -45,7 +36,7 @@ public class Main {
             System.out.println("\nWhat do you want to do?\n" +
                     "(Input 14 to see the menu options again.)\n" +
                     "Enter your choice:");
-            int selection = userInputHandler.readIntInput();
+            int selection = userInputHandler.readMenuInput(14);
             switch (selection) {
                 case 0 -> {
                     System.out.println("\nQuitting...");
@@ -65,7 +56,6 @@ public class Main {
                 case 12 -> customerService.showVipCustomers();
                 case 13 -> customerService.countVipCustomers();
                 case 14 -> printMainMenu();
-                default -> System.out.println("You have to enter a number between 1 and 14, or 0 to quit.");
             }
         }
     }

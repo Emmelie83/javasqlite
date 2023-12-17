@@ -6,7 +6,7 @@ public enum CustomerEnums {
 
     public final String label;
 
-    private CustomerEnums(String label) {
+    CustomerEnums(String label) {
         this.label = label;
     }
 }

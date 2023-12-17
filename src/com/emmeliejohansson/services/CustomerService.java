@@ -6,8 +6,8 @@ import com.emmeliejohansson.repositories.CustomerRepository;
 import java.util.ArrayList;
 
 public class CustomerService {
-    private UserInputHandler userInputHandler = new UserInputHandler();
-    private CustomerRepository customerRepository = new CustomerRepository();
+    private final UserInputHandler userInputHandler = new UserInputHandler();
+    private final CustomerRepository customerRepository = new CustomerRepository();
 
     //region create
 
@@ -19,9 +19,9 @@ public class CustomerService {
         System.out.println("First Name:");
         String firstName = userInputHandler.readStringInput();
         System.out.println("Last Name:");
-        String lastName = userInputHandler.readStringInput();;
+        String lastName = userInputHandler.readStringInput();
         System.out.println("Street address:");
-        String streetAddress = userInputHandler.readStringInput();;
+        String streetAddress = userInputHandler.readStringInput();
         System.out.println("Postal code:");
         String postalCode = userInputHandler.readStringInput();
         System.out.println("City:");
@@ -33,11 +33,9 @@ public class CustomerService {
         System.out.println("Email:");
         String email = userInputHandler.readStringInput();
         return new Customer(firstName, lastName, streetAddress, postalCode, city, country, telephone, email);
-
     }
 
     //endregion
-
 
     //region update
 
@@ -45,17 +43,13 @@ public class CustomerService {
         System.out.println("Customer ID for the customer you want to update:");
         int customerId = userInputHandler.readIntInput();
         printUpdateCustomerMenu();
-        int selection = userInputHandler.readIntInput();
+        int selection = userInputHandler.readMenuInput(5);
         switch (selection) {
-            case 0 -> {
-                return;
-            }
             case 1 -> updateFirstName(customerId);
             case 2 -> updateLastName(customerId);
             case 3 -> updateAddress(customerId);
             case 4 -> updateTelephone(customerId);
             case 5 -> updateEmail(customerId);
-            default -> System.out.println("You have to enter a number between 1 and 5, or 0 to go back.");
         }
     }
 
@@ -164,12 +158,8 @@ public class CustomerService {
     }
 
     private void showCustomers(ArrayList<Customer> customers) {
-        if (customers.isEmpty()) {
-            System.out.println("No customer found.");
-        }
-
-        for (int i = 0; i < customers.size(); i++) {
-            Customer c = customers.get(i);
+        if (customers.isEmpty()) System.out.println("No customer found.");
+        for (Customer c : customers) {
             System.out.println(c.getCustomerId() + "\t" +
                     c.getFirstName() + "\t" +
                     c.getLastName() + "\t" +
@@ -187,7 +177,7 @@ public class CustomerService {
     //endregion
 
     public void deleteCustomer(){
-        System.out.println("Insert customer number for the customer you want to delete: ");
+        System.out.println("Insert customer ID for the customer you want to delete: ");
         int customerId = userInputHandler.readIntInput();
         customerRepository.deleteCustomer(customerId);
     }

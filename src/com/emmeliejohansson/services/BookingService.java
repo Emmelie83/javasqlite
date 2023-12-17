@@ -6,8 +6,8 @@ import java.util.ArrayList;
 
 public class BookingService {
 
-    private UserInputHandler userInputHandler = new UserInputHandler();
-    private BookingRepository bookingRepository = new BookingRepository();
+    private final UserInputHandler userInputHandler = new UserInputHandler();
+    private final BookingRepository bookingRepository = new BookingRepository();
 
     //region create
 
@@ -40,16 +40,12 @@ public class BookingService {
         System.out.println("Booking ID for the booking you want to update:");
         int bookingId = userInputHandler.readIntInput();
         printUpdateBookingMenu();
-        int selection = userInputHandler.readIntInput();
+        int selection = userInputHandler.readMenuInput(4);
         switch (selection) {
-            case 0 -> {
-                return;
-            }
             case 1 -> updatePickupDate(bookingId);
             case 2 -> updateReturnDate(bookingId);
             case 3 -> updatePricePerDay(bookingId);
             case 4 -> updateCarRegNr(bookingId);
-            default -> System.out.println("You have to enter a number between 1 and 4, or 0 to go back.");
         }
     }
 
@@ -119,15 +115,14 @@ public class BookingService {
         if (bookings.isEmpty()) {
             System.out.println("No booking found.");
         }
-        for (int i = 0; i < bookings.size(); i++) {
-            Booking b = bookings.get(i);
+        for (Booking b : bookings) {
             System.out.println(b.getBookingId() + "\t" +
                     b.getBookingDate() + "\t" +
                     b.getPickupDate() + "\t" +
                     b.getReturnDate() + "\t" +
                     b.getPricePerDay() + "\t" +
                     b.getCustomerId() + "\t" +
-                    b.getCarRegNr() + "\t"
+                    b.getCarRegNr()
             );
         }
     }

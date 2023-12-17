@@ -2,7 +2,6 @@ package com.emmeliejohansson.repositories;
 
 import com.emmeliejohansson.data.DatabaseManager;
 import com.emmeliejohansson.data.entities.Booking;
-import com.emmeliejohansson.data.entities.Customer;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -40,11 +39,14 @@ public class BookingRepository {
 
             ResultSet rs = pstmt.executeQuery();
 
+            while (rs.next()) {
                 return mapResultSetToBooking(rs);
+            }
         } catch (SQLException e) {
             System.out.println("Error retrieving booking by ID: " + e.getMessage());
             return null;
         }
+        return null;
     }
 
     //endregion

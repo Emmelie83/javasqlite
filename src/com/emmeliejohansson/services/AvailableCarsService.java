@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class AvailableCarsService {
 
-    private UserInputHandler userInputHandler = new UserInputHandler();
-    private AvailableCarsRepository availableCarsRepository = new AvailableCarsRepository();
+    private final UserInputHandler userInputHandler = new UserInputHandler();
+    private final AvailableCarsRepository availableCarsRepository = new AvailableCarsRepository();
 
     public void showAllAvailableCars() {
         System.out.println("Insert category name: ");
@@ -24,8 +24,7 @@ public class AvailableCarsService {
         if (availableCars.isEmpty()) {
             System.out.println("No available car found.");
         }
-        for (int i = 0; i < availableCars.size(); i++) {
-            AvailableCar aC = availableCars.get(i);
+        for (AvailableCar aC : availableCars) {
             System.out.println(aC.getRegNr() + "\t" +
                     aC.getBrand() + "\t" +
                     aC.getColor() + "\t" +
